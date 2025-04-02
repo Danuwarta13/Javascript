@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ucapan Kehadiran</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8e8d9;
+        text-align: center;
+      }
+      .container {
+        max-width: 400px;
+        background: #faebd7;
+        padding: 20px;
+        border-radius: 10px;
+        margin: auto;
+        margin-top: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #8b0000;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .comment-box {
+        text-align: left;
+        margin-top: 20px;
+      }
+      .comment {
+        background: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        border-left: 5px solid #8b0000;
+        display: none;
+      }
+      .comment:first-child {
+        display: block; /* Tampilkan satu komentar pertama */
+      }
+      .reply {
+        margin-left: 20px;
+        background: #f4f4f4;
+        padding: 8px;
+        border-radius: 5px;
+        margin-top: 5px;
+      }
+      .user-name {
+        font-weight: bold;
+        color: #8b0000;
+      }
+      .status-hadir {
+        color: green;
+        font-size: 12px;
+      }
+      .status-tidak-hadir {
+        color: red;
+        font-size: 12px;
+      }
+      .reply-btn {
+        font-size: 10px;
+        background: #dcdcdc;
+        color: black;
+        border: none;
+        padding: 3px 6px;
+        cursor: pointer;
+        border-radius: 3px;
+        margin-left: 5px;
+      }
+      #toggle-comments {
+        margin-top: 10px;
+        font-size: 12px;
+        background: #555;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Ucapan Kehadiran</h2>
+      <p><span id="hadirCount">0</span> Hadir | <span id="tidakHadirCount">0</span> Tidak Hadir</p>
+
+      <input type="text" id="nama" placeholder="Nama" required />
+      <textarea id="ucapan" placeholder="Ucapan" required></textarea>
+      <select id="kehadiran">
+        <option value="">Konfirmasi Kehadiran</option>
+        <option value="Hadir">Hadir</option>
+        <option value="Tidak Hadir">Tidak Hadir</option>
+      </select>
+      <button onclick="kirimKomentar()">Kirim</button>
+
+      <div class="comment-box" id="commentList"></div>
+
+      <button id="toggle-comments" onclick="toggleKomentar()">Lihat Semua Komentar</button>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        loadKomentar();
+        updateCountFromStorage(); // Memperbaiki jumlah hadir/tidak hadir saat reload
+      });
+
+      function kirimKomentar(isReply = false, replyToId = null) {
+        let nama = document.getElementById("nama").value;
+        let ucapan = document.getElementById("ucapan").value;
+        let kehadiran = document.getElementById("kehadiran").value;
+
+        if (nama === "" || ucapan === "") {
+          alert("Harap isi semua kolom!");
+          return;
+        }
+
+        let komentar = JSON.parse(localStorage.getItem("komentar")) || [];
+
+        if (isReply) {
+          let index = komentar.findIndex((k) => k.id === replyToId);
+          if (index !== -1) {
+            komentar[index].replies.push({ nama: nama, text: ucapan });
+          }
+        } else {
+          if (kehadiran === "") {
+            alert("Silakan pilih konfirmasi kehadiran!");
+            return;
+          }
+
+          let komentarBaru = {
+            id: Date.now(),
+            nama: nama,
+            ucapan: ucapan,
+            kehadiran: kehadiran,
+            replies: [],
+          };
+
+          komentar.push(komentarBaru);
+        }
+
+        localStorage.setItem("komentar", JSON.stringify(komentar));
+        renderKomentar();
+        updateCountFromStorage(); // Update jumlah hadir/tidak hadir setelah menambah komentar
+        resetForm();
+      }
+
+      function renderKomentar() {
+        let komentar = JSON.parse(localStorage.getItem("komentar")) || [];
+        let commentList = document.getElementById("commentList");
+        commentList.innerHTML = "";
+
+        komentar.forEach((komentar, index) => {
+          let commentDiv = document.createElement("div");
+          commentDiv.classList.add("comment");
+          if (index === 0) commentDiv.style.display = "block"; // Tampilkan satu komentar pertama
+
+          let statusClass = komentar.kehadiran === "Hadir" ? "status-hadir" : "status-tidak-hadir";
+          let icon = komentar.kehadiran === "Hadir" ? "✔️" : "❌";
+
+          commentDiv.innerHTML = `
+                <p class="user-name">${komentar.nama} ${icon}</p>
+                <p>${komentar.ucapan}</p>
+                <small class="${statusClass}">${komentar.kehadiran}</small>
+                <button class="reply-btn" onclick="isiNamaReply('${komentar.nama}', ${komentar.id})">Reply</button>
+                <div class="replies" id="replyList-${komentar.id}"></div>
+            `;
+
+          commentList.appendChild(commentDiv);
+
+          komentar.replies.forEach((reply) => tampilkanReply(komentar.id, reply));
+        });
+      }
+
+      function updateCountFromStorage() {
+        let komentar = JSON.parse(localStorage.getItem("komentar")) || [];
+        let hadir = komentar.filter((k) => k.kehadiran === "Hadir").length;
+        let tidakHadir = komentar.filter((k) => k.kehadiran === "Tidak Hadir").length;
+
+        document.getElementById("hadirCount").innerText = hadir;
+        document.getElementById("tidakHadirCount").innerText = tidakHadir;
+      }
+
+      function isiNamaReply(nama, commentId) {
+        document.getElementById("nama").value = `Balasan untuk ${nama}`;
+        document.getElementById("kehadiran").style.display = "none";
+        document.querySelector("button[onclick='kirimKomentar()']").setAttribute("onclick", `kirimKomentar(true, ${commentId})`);
+      }
+
+      function tampilkanReply(commentId, reply) {
+        let replyList = document.getElementById(`replyList-${commentId}`);
+
+        let replyDiv = document.createElement("div");
+        replyDiv.classList.add("reply");
+        replyDiv.innerHTML = `
+            <p class="user-name">${reply.nama}</p>
+            <p>${reply.text}</p>
+        `;
+
+        replyList.appendChild(replyDiv);
+      }
+
+      function toggleKomentar() {
+        document.querySelectorAll(".comment").forEach((comment) => (comment.style.display = "block"));
+        document.getElementById("toggle-comments").style.display = "none";
+      }
+
+      function resetForm() {
+        document.getElementById("nama").value = "";
+        document.getElementById("ucapan").value = "";
+        document.getElementById("kehadiran").value = "";
+        document.getElementById("kehadiran").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
