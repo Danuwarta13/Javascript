@@ -1,24 +1,23 @@
-function getPilihanComputer() {
-  const comp = Math.random();
-  if (comp < 0.35) {
-    return "gajah";
-  } else if (comp >= 0.35 && comp < 0.67) {
-    return "orang";
-  } else {
-    return "semut";
-  }
-}
-
-// function getPilihanComputer(player) {
-//   if (player === "gajah") {
-//     return "semut";
-//   } else if (player === "semut") {
+// function getPilihanComputer() {
+//   const comp = Math.random();
+//   if (comp < 0.35) {
+//     return "gajah";
+//   } else if (comp >= 0.35 && comp < 0.67) {
 //     return "orang";
 //   } else {
-//     return "gajah";
+//     return "semut";
 //   }
 // }
 
+function getPilihanComputer(player) {
+  if (player === "gajah") {
+    return "semut";
+  } else if (player === "semut") {
+    return "orang";
+  } else {
+    return "gajah";
+  }
+}
 function getHasil(comp, player) {
   //   if (player == comp) return "SERI";
   //   if ((player = "gajah")) return comp == "orang" ? "Menang" : "Kalah";
@@ -69,8 +68,8 @@ const pilihan = document.querySelectorAll("li img");
 pilihan.forEach(function (pil) {
   pil.addEventListener("click", function () {
     const pilihanPlayer = pil.className;
-    const pilihanComputer = getPilihanComputer();
-    // const pilihanComputer = getPilihanComputer(pilihanPlayer);
+    // const pilihanComputer = getPilihanComputer();
+    const pilihanComputer = getPilihanComputer(pilihanPlayer);
     const hasil = getHasil(pilihanComputer, pilihanPlayer);
     // console.log(pilihanComputer);
     putar();
