@@ -41,30 +41,43 @@ console.log("\n");
 
 // 2. Push & Pop = menambah dan menghapus dari belakang
 // menambah
-arr.push("kambing");
-console.log(`Push untuk menambah dari belakang \n ${arr.join(" - ")}`);
+console.log(`Push untuk menambah dari belakang
+  Hewan = ${arr.join(" - ")}
+  ditambah Kambing menjadi ${arr.push("Kambing")}
+  Hasil = ${arr.join(" - ")}`);
 console.log("\n");
 
 // Menghapus
-arr.pop();
-console.log(`Pop untuk menghapus dari belakang \n ${arr.join(" - ")}`);
+console.log(`Pop untuk menghapus dari belakang
+  Hewan = ${arr.join(" - ")}
+  Menghapus ${arr.pop()}
+  Hasil = ${arr.join(" - ")}`);
 console.log("\n");
 
 // 3. Unshift & Shift = menambah dan menghapus dari depan
 // Menambah
-arr.unshift("kuda", "paus");
-console.log(`Unshift untuk menambah dari depan \n ${arr.join(" - ")}`);
+console.log(`Unshift untuk menambah dari depan
+  Hewan = ${arr.join(" - ")}
+  Ditambah Kuda & Paus dari depan menjadi ${arr.unshift("kuda", "paus")}
+  Hasil = ${arr.join(" - ")}`);
 console.log("\n");
 
 // Menghapus
-arr.shift();
-console.log(`Shit untuk menghapus dari depan \n ${arr.join(" - ")}`);
+console.log(`Shit untuk menghapus dari depan
+  Hewan = ${arr.join(" - ")}
+  Menghapus ${arr.shift()} dari depan
+  Hasil = ${arr.join(" - ")}
+  `);
 console.log("\n");
 
 // 4. Splice
 // Splice(indexAwal, mauDihapusBerapa, tambahElemenBaru1, tambahElementBaru2, ....)
-arr.splice(1, 0, "kuda", "balap", "burung");
-console.log(`Splice untuk hapus, tambah atau ganti (posisi, jummlahHapus, itemBaru1, itemBaru2, ...) \n ${arr.join(" - ")}`);
+// arr.splice(1, 0, "kuda", "balap", "burung");
+console.log(`Splice untuk hapus, tambah atau ganti (posisi, jummlahHapus, itemBaru1, itemBaru2, ...)
+  Dari ${arr.join(" - ")}
+  Menambah Kuda - balap - Burung di index 1 ${arr.splice(1, 0, "Kuda", "balap", "Burung")}
+  Hasil = ${arr.join(" - ")}
+  `);
 console.log("\n");
 
 // 5. Slice
@@ -72,7 +85,8 @@ console.log("\n");
 const kue = ["kue Cokelat", "Donat", "Biskuit", "Cupcake", "Kue Tart"];
 const diambil = kue.slice(2, 4);
 console.log(`Kue = ${kue.join(" - ")}`);
-console.log(`Slice(awal, akhir) untuk mengambil dari awal sampai sebelum akhir \n ${diambil.join(" - ")} (awal = 2 akhir = 4)`);
+console.log(`Slice(awal, akhir) untuk mengambil dari awal sampai sebelum akhir
+   Hasil = ${diambil.join(" - ")} (awal = 2 akhir = 4)`);
 console.log("\n");
 
 // 6.Foreach
