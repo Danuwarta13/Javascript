@@ -1,6 +1,6 @@
-var noAngkot = 1;
-var angkotBeroperasi = 6;
-var jmlhAngkot = 10;
+let noAngkot = 1;
+const angkotBeroperasi = 6;
+const jmlhAngkot = 10;
 
 for (noAngkot; noAngkot <= jmlhAngkot; noAngkot++) {
   if (noAngkot <= angkotBeroperasi) {
